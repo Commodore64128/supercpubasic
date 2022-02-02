@@ -2,6 +2,12 @@
 
 Access your SCPU RAM from BASIC
 
+To activate:
+
+LOAD"SCPUBASIC",8,1
+
+SYS49152
+
 Commands:
 
 @Bx  (x = sets the RAM bank number between 0 and 255)
