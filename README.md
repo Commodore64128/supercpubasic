@@ -5,6 +5,7 @@ Access your SCPU RAM from BASIC
 Commands:
 
 @Bx  (x = sets the RAM bank number between 0 and 255)
+
 @P addr,val  (just like POKE command, but using the current bank above)
 
 Because this is a simple wedge, I couldnt implement a PEEK function, so instead I
