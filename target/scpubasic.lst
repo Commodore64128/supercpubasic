@@ -1,0 +1,149 @@
+
+; 64tass Turbo Assembler Macro V1.53.1515 listing file
+; 64tass -a -l target\scpubasic.lbl -L target\scpubasic.lst -o target\scpubasic src\scpubasic.asm
+; Wed Feb 02 13:46:50 2022
+
+;Offset	;Hex		;Monitor	;Source
+
+;******  Processing input file: src\scpubasic.asm
+
+
+;******  Processing file: src\macros.asm
+
+
+;******  Return to file: src\scpubasic.asm
+
+=$0073					CHRGET = $0073
+=$0079					CHRGOT = $0079
+=$af08					SNERR = $AF08
+=$a7ae					NEWSTT = $a7ae
+=$a7e4					GONE = $a7e4
+=$ab1e					STROUT = $ab1e
+.c000	20 a1 c0	jsr $c0a1	   jsr intromsg
+.c003	a9 4c		lda #$4c	   lda #<newgone
+.c005	8d 08 03	sta $0308	   sta $0308
+.c008	a9 c0		lda #$c0	   lda #>newgone
+.c00a	8d 09 03	sta $0309	   sta $0309
+.c00d	a9 ff		lda #$ff	    lda #<cpeek
+.c00f	8d 11 03	sta $0311	    sta $311
+.c012	a9 c0		lda #$c0	    lda #>cpeek
+.c014	8d 12 03	sta $0312	    sta $312
+.c017	60		rts		   rts
+=$c018					table=*
+>c018	99 c0				   .word notimp-1 ; @a
+>c01a	e3 c0				   .word do_bank-1 ; @b
+>c01c	99 c0				   .word notimp-1  ; @c
+>c01e	99 c0				   .word notimp-1 ; @d
+>c020	99 c0				   .word notimp-1 ; @e
+>c022	99 c0				   .word notimp-1 ; @f
+>c024	99 c0				   .word notimp-1 ; @g
+>c026	99 c0				   .word notimp-1 ; @h
+>c028	99 c0				   .word notimp-1 ; @i
+>c02a	99 c0				   .word notimp-1 ; @j
+>c02c	99 c0				   .word notimp-1 ; @k
+>c02e	99 c0				   .word notimp-1 ; @l
+>c030	99 c0				   .word notimp-1 ; @m
+>c032	99 c0				   .word notimp-1 ; @n
+>c034	99 c0				   .word notimp-1 ; @o
+>c036	eb c0				   .word do_cpoke-1 ; @p
+>c038	99 c0				   .word notimp-1 ; @q
+>c03a	99 c0				   .word notimp-1 ; @r
+>c03c	99 c0				   .word notimp-1 ; @s
+>c03e	99 c0				   .word notimp-1 ; @t
+>c040	99 c0				   .word notimp-1 ; @u
+>c042	99 c0				   .word notimp-1 ; @v
+>c044	99 c0				   .word notimp-1 ; @w
+>c046	99 c0				   .word notimp-1 ; @x
+>c048	99 c0				   .word notimp-1 ; @y
+>c04a	99 c0				   .word notimp-1 ; @z
+=$c04c					newgone = *
+.c04c	20 73 00	jsr $0073	   jsr CHRGET
+.c04f	08		php		   php
+.c050	c9 40		cmp #$40	   cmp #"@"
+.c052	f0 04		beq $c058	   beq newdispatch
+.c054	28		plp		   plp
+.c055	4c e7 a7	jmp $a7e7	   jmp GONE+3
+=$c058					newdispatch = *
+.c058	28		plp		   plp
+.c059	20 5f c0	jsr $c05f	   jsr dispatch
+.c05c	4c ae a7	jmp $a7ae	   jmp NEWSTT
+=$c05f					dispatch = *
+.c05f	20 73 00	jsr $0073	   jsr CHRGET
+.c062	c9 41		cmp #$41	   cmp #'a'
+.c064	b0 03		bcs $c069	   bcs contin1
+.c066	4c 08 af	jmp $af08	   jmp SNERR
+=$c069					contin1 = *
+.c069	c9 5a		cmp #$5a	   cmp #'z'
+.c06b	90 03		bcc $c070	   bcc contin2
+.c06d	4c 08 af	jmp $af08	   jmp SNERR
+=$c070					contin2 =  *
+.c070	38		sec		   sec
+.c071	e9 41		sbc #$41	   sbc #'a'
+.c073	c9 5a		cmp #$5a	   cmp #'z'
+.c075	0a		asl a		   asl
+.c076	aa		tax		   tax
+.c077	bd 19 c0	lda $c019,x	   lda table+1,x
+.c07a	48		pha		   pha
+.c07b	bd 18 c0	lda $c018,x	   lda table,x
+.c07e	48		pha		   pha
+.c07f	4c 73 00	jmp $0073	   jmp CHRGET
+>c082	3f 4e 4f 54 20 49 4d 50		msg .text "?not implemented  error"
+>c08a	4c 45 4d 45 4e 54 45 44 20 20 45 52 52 4f 52
+>c099	00				    .byte 0
+=$c09a					notimp = *
+.c09a	a0 c0		ldy #$c0	   ldy #>msg
+.c09c	a9 82		lda #$82	   lda #<msg
+.c09e	4c 1e ab	jmp $ab1e	   jmp STROUT
+=$c0a1					intromsg = *
+.c0a1	a0 c0		ldy #$c0	    ldy #>imsg
+.c0a3	a9 a8		lda #$a8	    lda #<imsg
+.c0a5	4c 1e ab	jmp $ab1e	    jmp STROUT
+.c0a8					imsg
+>c0a8	53 55 50 45 52 43 50 55		    .text "supercpu ram wedge", $0d
+>c0b0	20 52 41 4d 20 57 45 44 47 45 0d
+>c0bb	42 59 20 4a 49 4d 20 4c		    .text "by jim lawless", $0d
+>c0c3	41 57 4c 45 53 53 0d
+>c0ca	4d 4f 44 49 46 49 45 44		    .text "modified by scott hutter",$0d
+>c0d2	20 42 59 20 53 43 4f 54 54 20 48 55 54 54 45 52
+>c0e2	0d
+>c0e3	00				   .byte 0
+=$c0e4					do_bank = *
+.c0e4	20 9e b7	jsr $b79e	    jsr $b79e ; get byte into .x
+.c0e7	8a		txa		    txa
+.c0e8	8d fe c0	sta $c0fe	    sta bank_stor
+.c0eb	60		rts		    rts
+=$c0ec					do_cpoke = *
+.c0ec	18		clc		                clc
+.c0ed	fb		xce		                xce
+.c0ee	e2 30		sep #$30	                SEP #$30
+.c0f0	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $16
+.c0f3	85 16		sta $16		    sta $16
+.c0f5	20 eb b7	jsr $b7eb	    jsr $b7eb       ; handle values (puts lo and hi byte of addresses at $14/$15) and value in X
+.c0f8	8a		txa		    txa
+.c0f9	87 14		sta [$14]	    sta [$14]       ; requires lo byte, hi byte, bank
+.c0fb	38		sec		                sec
+.c0fc	fb		xce		                xce
+.c0fd	60		rts		    rts
+.c0fe					bank_stor:
+>c0fe	06				    .byte $06
+.c0ff					cpeek:
+.c0ff	18		clc		                clc
+.c100	fb		xce		                xce
+.c101	e2 30		sep #$30	                SEP #$30
+.c103	20 9b bc	jsr $bc9b	    jsr $bc9b   ; convert value from float to int @ $64/$65
+.c106	a5 64		lda $64		    lda $64
+.c108	a6 65		ldx $65		    ldx $65
+.c10a	86 fb		stx $fb		    stx $fb     ; store the lo and hi bytes temporarily
+.c10c	85 fc		sta $fc		    sta $fc
+.c10e	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $fd
+.c111	85 fd		sta $fd		    sta $fd
+.c113	a7 fb		lda [$fb]	    lda [$fb]   ; get value at 24 bit address
+.c115	a8		tay		    tay         ; lsb of value in y
+.c116	a9 00		lda #$00	    lda #$00    ; msb of value in a
+.c118	20 91 b3	jsr $b391	    jsr $b391   ; convert int back to float
+.c11b	38		sec		                sec
+.c11c	fb		xce		                xce
+.c11d	60		rts		    rts
+.c11e					end
+
+;******  End of listing
