@@ -12,7 +12,7 @@ Commands:
 
 @Bx  (x = sets the RAM bank number between 0 and 255)
 
-@L <filename>,<address>,<drive>  - Loads SuperRAM with data using the selected bank
+@L \<filename\>,\<address\>,\<drive\>  - Loads SuperRAM with data using the selected bank
 
 @P addr,val  (just like POKE command, but using the current bank above)
 
