@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.53.1515 listing file
 ; 64tass -a -l target\scpubasic.lbl -L target\scpubasic.lst -o target\scpubasic src\scpubasic.asm
-; Wed Feb 02 13:46:50 2022
+; Sat Feb 12 02:22:53 2022
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -24,9 +24,9 @@
 .c005	8d 08 03	sta $0308	   sta $0308
 .c008	a9 c0		lda #$c0	   lda #>newgone
 .c00a	8d 09 03	sta $0309	   sta $0309
-.c00d	a9 ff		lda #$ff	    lda #<cpeek
+.c00d	a9 c0		lda #$c0	    lda #<cpeek
 .c00f	8d 11 03	sta $0311	    sta $311
-.c012	a9 c0		lda #$c0	    lda #>cpeek
+.c012	a9 c1		lda #$c1	    lda #>cpeek
 .c014	8d 12 03	sta $0312	    sta $312
 .c017	60		rts		   rts
 =$c018					table=*
@@ -41,7 +41,7 @@
 >c028	99 c0				   .word notimp-1 ; @i
 >c02a	99 c0				   .word notimp-1 ; @j
 >c02c	99 c0				   .word notimp-1 ; @k
->c02e	99 c0				   .word notimp-1 ; @l
+>c02e	fe c0				   .word do_load-1 ; @l
 >c030	99 c0				   .word notimp-1 ; @m
 >c032	99 c0				   .word notimp-1 ; @n
 >c034	99 c0				   .word notimp-1 ; @o
@@ -126,24 +126,116 @@
 .c0fd	60		rts		    rts
 .c0fe					bank_stor:
 >c0fe	06				    .byte $06
-.c0ff					cpeek:
+=$c0ff					do_load = *
 .c0ff	18		clc		                clc
 .c100	fb		xce		                xce
-.c101	e2 30		sep #$30	                SEP #$30
-.c103	20 9b bc	jsr $bc9b	    jsr $bc9b   ; convert value from float to int @ $64/$65
-.c106	a5 64		lda $64		    lda $64
-.c108	a6 65		ldx $65		    ldx $65
-.c10a	86 fb		stx $fb		    stx $fb     ; store the lo and hi bytes temporarily
-.c10c	85 fc		sta $fc		    sta $fc
-.c10e	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $fd
-.c111	85 fd		sta $fd		    sta $fd
-.c113	a7 fb		lda [$fb]	    lda [$fb]   ; get value at 24 bit address
-.c115	a8		tay		    tay         ; lsb of value in y
-.c116	a9 00		lda #$00	    lda #$00    ; msb of value in a
-.c118	20 91 b3	jsr $b391	    jsr $b391   ; convert int back to float
-.c11b	38		sec		                sec
-.c11c	fb		xce		                xce
-.c11d	60		rts		    rts
-.c11e					end
+.c101	e2 20		sep #$20	                SEP #$20
+.c103	e2 30		sep #$30	                SEP #$30
+.c105	c9 22		cmp #$22	      cmp #$22       ; quote char?
+.c107	d0 19		bne $c122	      bne _errorjmp  ; no - error
+.c109	a9 00		lda #$00	      lda #$00
+.c10b	8d bf c1	sta $c1bf	      sta fnamelen
+.c10e					_fnameloop
+.c10e	20 73 00	jsr $0073	      jsr $0073      ; start getting filename
+.c111	c9 22		cmp #$22	      cmp #$22       ; end quote?
+.c113	f0 10		beq $c125	      beq +          ; yes, skip ahead
+.c115	ac bf c1	ldy $c1bf	      ldy fnamelen   ; get filename length count
+.c118	99 ae c1	sta $c1ae,y	      sta fname,y    ; grab next filename char
+.c11b	c8		iny		      iny            ; increase count
+.c11c	8c bf c1	sty $c1bf	      sty fnamelen   ; save new filename length
+.c11f	4c 0e c1	jmp $c10e	      jmp _fnameloop
+.c122					_errorjmp
+.c122	4c a4 c1	jmp $c1a4	      jmp _error
+.c125	20 73 00	jsr $0073	+     jsr $0073      ; get char
+.c128	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
+.c12a	d0 78		bne $c1a4	      bne _error
+.c12c	20 73 00	jsr $0073	      jsr $0073      ; get char
+.c12f	f0 73		beq $c1a4	      beq _error     ; zero flag is set if end of line or :
+.c131	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate the memory address
+.c134	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
+.c137	a5 14		lda $14		      lda $14        ; move values to ae-b0
+.c139	85 ae		sta $ae		      sta $ae
+.c13b	a5 15		lda $15		      lda $15
+.c13d	85 af		sta $af		      sta $af
+.c13f	ad fe c0	lda $c0fe	      lda bank_stor
+.c142	85 b0		sta $b0		      sta $b0
+.c144	a0 00		ldy #$00	      ldy #$00       ; get current char of line
+.c146	b1 7a		lda ($7a),y	      lda ($007a),y
+.c148	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
+.c14a	d0 58		bne $c1a4	      bne _error
+.c14c	20 73 00	jsr $0073	      jsr $0073      ; get char
+.c14f	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate
+.c152	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
+.c155	a5 15		lda $15		      lda $15        ; if > 255, error
+.c157	d0 4b		bne $c1a4	      bne _error
+.c159	a5 14		lda $14		      lda $14        ; if > 30, error
+.c15b	c9 1e		cmp #$1e	      cmp #$1e
+.c15d	b0 45		bcs $c1a4	      bcs _error
+.c15f	ad bf c1	lda $c1bf	      lda fnamelen
+.c162	a2 ae		ldx #$ae	      ldx #<fname
+.c164	a0 c1		ldy #$c1	      ldy #>fname
+.c166	20 bd ff	jsr $ffbd	      jsr $ffbd     ; call setnam
+.c169	a9 02		lda #$02	      lda #$02      ; file number 2
+.c16b	a6 14		ldx $14		      ldx $14       ; device number
+.c16d	d0 02		bne $c171	      bne _skip
+.c16f	a2 08		ldx #$08	      ldx #$08      ; default to device 8
+.c171					_skip
+.c171	a0 02		ldy #$02	      ldy #$02      ; secondary address 2
+.c173	20 ba ff	jsr $ffba	      jsr $ffba     ; call setlfs
+.c176	20 c0 ff	jsr $ffc0	      jsr $ffc0     ; call open
+.c179	b0 29		bcs $c1a4	      bcs _error    ; if carry set, the file could not be opened
+.c17b	a2 02		ldx #$02	      ldx #$02      ; filenumber 2
+.c17d	20 c6 ff	jsr $ffc6	      jsr $ffc6     ; call chkin (file 2 now used as input)
+.c180	a0 00		ldy #$00	        ldy #$00
+.c182	20 b7 ff	jsr $ffb7	_loop   jsr $ffb7     ; call readst (read status byte)
+.c185	d0 0e		bne $c195	        bne _eof      ; either eof or read error
+.c187	20 cf ff	jsr $ffcf	        jsr $ffcf     ; call chrin (get a byte from file)
+.c18a	97 ae		sta [$ae],y	         sta [$ae],y   ; write byte to memory
+.c18c	e6 ae		inc $ae		         inc $0000ae
+.c18e	d0 02		bne $c192	         bne _skip2
+.c190	e6 af		inc $af		         inc $0000af
+.c192	4c 82 c1	jmp $c182	_skip2   jmp _loop     ; next byte
+.c195					_eof
+.c195	29 40		and #$40	        and #$40      ; end of file?
+.c197	f0 10		beq $c1a9	        beq _readerror
+.c199					_close
+.c199	a9 02		lda #$02	        lda #$02      ; filenumber 2
+.c19b	20 c3 ff	jsr $ffc3	        jsr $ffc3     ; call close
+.c19e	20 cc ff	jsr $ffcc	        jsr $ffcc     ; call clrchn
+.c1a1	38		sec		                sec
+.c1a2	fb		xce		                xce
+.c1a3	60		rts		        rts
+.c1a4					_error
+.c1a4	38		sec		                sec
+.c1a5	fb		xce		                xce
+.c1a6	4c 99 c1	jmp $c199	        jmp _close    ; even if open failed, the file has to be closed
+.c1a9					_readerror
+.c1a9	38		sec		                sec
+.c1aa	fb		xce		                xce
+.c1ab	4c 99 c1	jmp $c199	        jmp _close
+.c1ae					fname:
+>c1ae	00 00 00 00 00 00 00 00		.byte $00, $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>c1b6	00 00 00 00 00 00 00 00 00
+.c1bf					fnamelen:
+>c1bf	00				.byte $00
+.c1c0					cpeek:
+.c1c0	18		clc		                clc
+.c1c1	fb		xce		                xce
+.c1c2	e2 30		sep #$30	                SEP #$30
+.c1c4	20 9b bc	jsr $bc9b	    jsr $bc9b   ; convert value from float to int @ $64/$65
+.c1c7	a5 64		lda $64		    lda $64
+.c1c9	a6 65		ldx $65		    ldx $65
+.c1cb	86 fb		stx $fb		    stx $fb     ; store the lo and hi bytes temporarily
+.c1cd	85 fc		sta $fc		    sta $fc
+.c1cf	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $fd
+.c1d2	85 fd		sta $fd		    sta $fd
+.c1d4	a7 fb		lda [$fb]	    lda [$fb]   ; get value at 24 bit address
+.c1d6	a8		tay		    tay         ; lsb of value in y
+.c1d7	a9 00		lda #$00	    lda #$00    ; msb of value in a
+.c1d9	20 91 b3	jsr $b391	    jsr $b391   ; convert int back to float
+.c1dc	38		sec		                sec
+.c1dd	fb		xce		                xce
+.c1de	60		rts		    rts
+.c1df					end
 
 ;******  End of listing

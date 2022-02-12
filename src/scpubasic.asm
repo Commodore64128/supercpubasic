@@ -42,7 +42,7 @@ table=*
    .word notimp-1 ; @i
    .word notimp-1 ; @j
    .word notimp-1 ; @k
-   .word notimp-1 ; @l
+   .word do_load-1 ; @l
    .word notimp-1 ; @m
    .word notimp-1 ; @n
    .word notimp-1 ; @o
@@ -140,6 +140,122 @@ do_cpoke = *
 
 bank_stor:
     .byte $06
+
+do_load = *
+      native
+      rega8
+      regaxy8
+
+      cmp #$22       ; quote char?
+      bne _errorjmp  ; no - error
+      lda #$00
+      sta fnamelen
+_fnameloop
+      jsr $0073      ; start getting filename
+      cmp #$22       ; end quote?
+      beq +          ; yes, skip ahead
+      ldy fnamelen   ; get filename length count
+      sta fname,y    ; grab next filename char
+      iny            ; increase count
+      sty fnamelen   ; save new filename length
+      jmp _fnameloop
+
+_errorjmp
+      jmp _error
+
++     jsr $0073      ; get char
+      cmp #$2c       ; if not comma, error
+      bne _error
+      jsr $0073      ; get char
+      beq _error     ; zero flag is set if end of line or :
+      jsr $ad8a      ; evaluate the memory address
+      jsr $b7f7      ; put value at $14/$15
+      lda $14        ; move values to ae-b0
+      sta $ae
+      lda $15
+      sta $af
+      lda bank_stor
+      sta $b0
+      ldy #$00       ; get current char of line
+      lda ($007a),y
+      cmp #$2c       ; if not comma, error
+      bne _error
+      jsr $0073      ; get char
+      jsr $ad8a      ; evaluate
+      jsr $b7f7      ; put value at $14/$15
+      lda $15        ; if > 255, error
+      bne _error
+      lda $14        ; if > 30, error
+      cmp #$1e
+      bcs _error
+
+      lda fnamelen
+      ldx #<fname
+      ldy #>fname
+      jsr $ffbd     ; call setnam
+
+      lda #$02      ; file number 2
+      ldx $14       ; device number
+      bne _skip
+      ldx #$08      ; default to device 8
+_skip   
+      ldy #$02      ; secondary address 2
+      jsr $ffba     ; call setlfs
+
+      jsr $ffc0     ; call open
+      bcs _error    ; if carry set, the file could not be opened
+
+      ; check drive error channel here to test for
+      ; file not found error etc.
+
+      ldx #$02      ; filenumber 2
+      jsr $ffc6     ; call chkin (file 2 now used as input)
+
+        ldy #$00
+_loop   jsr $ffb7     ; call readst (read status byte)
+        bne _eof      ; either eof or read error
+        jsr $ffcf     ; call chrin (get a byte from file)
+
+         sta [$ae],y   ; write byte to memory       
+         inc $0000ae
+         bne _skip2
+         inc $0000af
+
+_skip2   jmp _loop     ; next byte
+
+_eof
+        and #$40      ; end of file?
+        beq _readerror
+_close
+        lda #$02      ; filenumber 2
+        jsr $ffc3     ; call close
+
+        jsr $ffcc     ; call clrchn
+
+        emulation
+        rts
+_error
+        ; akkumulator contains basic error code
+        ; most likely errors:
+        ; a = $05 (device not present)
+        ;... error handling for open errors ...
+        emulation
+        jmp _close    ; even if open failed, the file has to be closed
+_readerror
+        ; for further information, the drive error channel has to be read
+
+        ;... error handling for read errors ...
+        emulation
+        jmp _close
+
+fname:  
+.byte $00, $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+fnamelen:
+.byte $00
+
+
+
+   
 
 cpeek:
     native
