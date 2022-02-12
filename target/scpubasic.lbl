@@ -1,5 +1,6 @@
+do_slow		= $c1dc
 bank_stor	= $c0fb
-end		= $c1dc
+end		= $c1e4
 intromsg	= $c09e
 dispatch	= $c05c
 newdispatch	= $c055
@@ -15,6 +16,7 @@ NEWSTT		= $a7ae
 GONE		= $a7e4
 do_bank		= $c0e1
 fname		= $c1ab
+do_fast		= $c1e0
 do_cpoke	= $c0e9
 notimp		= $c097
 CHRGOT		= $0079

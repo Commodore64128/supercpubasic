@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.53.1515 listing file
 ; 64tass -a -l target\scpubasic.lbl -L target\scpubasic.lst -o target\scpubasic src\scpubasic.asm
-; Sat Feb 12 02:28:24 2022
+; Sat Feb 12 07:56:40 2022
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -34,7 +34,7 @@
 >c019	96 c0				   .word notimp-1  ; @c
 >c01b	96 c0				   .word notimp-1 ; @d
 >c01d	96 c0				   .word notimp-1 ; @e
->c01f	96 c0				   .word notimp-1 ; @f
+>c01f	df c1				   .word do_fast-1 ; @f
 >c021	96 c0				   .word notimp-1 ; @g
 >c023	96 c0				   .word notimp-1 ; @h
 >c025	96 c0				   .word notimp-1 ; @i
@@ -47,7 +47,7 @@
 >c033	e8 c0				   .word do_cpoke-1 ; @p
 >c035	96 c0				   .word notimp-1 ; @q
 >c037	96 c0				   .word notimp-1 ; @r
->c039	96 c0				   .word notimp-1 ; @s
+>c039	db c1				   .word do_slow-1 ; @s
 >c03b	96 c0				   .word notimp-1 ; @t
 >c03d	96 c0				   .word notimp-1 ; @u
 >c03f	96 c0				   .word notimp-1 ; @v
@@ -235,6 +235,12 @@
 .c1d9	38		sec		                sec
 .c1da	fb		xce		                xce
 .c1db	60		rts		    rts
-.c1dc					end
+=$c1dc					do_slow = *
+.c1dc	8d 7a d0	sta $d07a	   sta $d07a
+.c1df	60		rts		   rts
+=$c1e0					do_fast = *
+.c1e0	8d 7b d0	sta $d07b	   sta $d07b
+.c1e3	60		rts		   rts
+.c1e4					end
 
 ;******  End of listing

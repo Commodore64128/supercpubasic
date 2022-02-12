@@ -36,7 +36,7 @@ table=*
    .word notimp-1  ; @c
    .word notimp-1 ; @d
    .word notimp-1 ; @e
-   .word notimp-1 ; @f
+   .word do_fast-1 ; @f
    .word notimp-1 ; @g
    .word notimp-1 ; @h
    .word notimp-1 ; @i
@@ -49,7 +49,7 @@ table=*
    .word do_cpoke-1 ; @p
    .word notimp-1 ; @q
    .word notimp-1 ; @r
-   .word notimp-1 ; @s
+   .word do_slow-1 ; @s
    .word notimp-1 ; @t
    .word notimp-1 ; @u
    .word notimp-1 ; @v
@@ -278,6 +278,14 @@ cpeek:
     emulation
     rts
 
+
+do_slow = *
+   sta $d07a
+   rts
+
+do_fast = *
+   sta $d07b
+   rts
 
 
 end
