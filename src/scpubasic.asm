@@ -1,5 +1,5 @@
 ;------------------------------------------
-; SuperCPU Ramcheck
+; SuperCPU BASIC Commands
 ; Scott Hutter / xlar54
 ;------------------------------------------
 
@@ -15,7 +15,7 @@ NEWSTT = $a7ae
 GONE = $a7e4
 STROUT = $ab1e
  
-   jsr intromsg
+   ;jsr intromsg
  
    lda #<newgone
    sta $0308

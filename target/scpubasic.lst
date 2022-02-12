@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.53.1515 listing file
 ; 64tass -a -l target\scpubasic.lbl -L target\scpubasic.lst -o target\scpubasic src\scpubasic.asm
-; Sat Feb 12 02:22:53 2022
+; Sat Feb 12 02:28:24 2022
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -19,223 +19,222 @@
 =$a7ae					NEWSTT = $a7ae
 =$a7e4					GONE = $a7e4
 =$ab1e					STROUT = $ab1e
-.c000	20 a1 c0	jsr $c0a1	   jsr intromsg
-.c003	a9 4c		lda #$4c	   lda #<newgone
-.c005	8d 08 03	sta $0308	   sta $0308
-.c008	a9 c0		lda #$c0	   lda #>newgone
-.c00a	8d 09 03	sta $0309	   sta $0309
-.c00d	a9 c0		lda #$c0	    lda #<cpeek
-.c00f	8d 11 03	sta $0311	    sta $311
-.c012	a9 c1		lda #$c1	    lda #>cpeek
-.c014	8d 12 03	sta $0312	    sta $312
-.c017	60		rts		   rts
-=$c018					table=*
->c018	99 c0				   .word notimp-1 ; @a
->c01a	e3 c0				   .word do_bank-1 ; @b
->c01c	99 c0				   .word notimp-1  ; @c
->c01e	99 c0				   .word notimp-1 ; @d
->c020	99 c0				   .word notimp-1 ; @e
->c022	99 c0				   .word notimp-1 ; @f
->c024	99 c0				   .word notimp-1 ; @g
->c026	99 c0				   .word notimp-1 ; @h
->c028	99 c0				   .word notimp-1 ; @i
->c02a	99 c0				   .word notimp-1 ; @j
->c02c	99 c0				   .word notimp-1 ; @k
->c02e	fe c0				   .word do_load-1 ; @l
->c030	99 c0				   .word notimp-1 ; @m
->c032	99 c0				   .word notimp-1 ; @n
->c034	99 c0				   .word notimp-1 ; @o
->c036	eb c0				   .word do_cpoke-1 ; @p
->c038	99 c0				   .word notimp-1 ; @q
->c03a	99 c0				   .word notimp-1 ; @r
->c03c	99 c0				   .word notimp-1 ; @s
->c03e	99 c0				   .word notimp-1 ; @t
->c040	99 c0				   .word notimp-1 ; @u
->c042	99 c0				   .word notimp-1 ; @v
->c044	99 c0				   .word notimp-1 ; @w
->c046	99 c0				   .word notimp-1 ; @x
->c048	99 c0				   .word notimp-1 ; @y
->c04a	99 c0				   .word notimp-1 ; @z
-=$c04c					newgone = *
-.c04c	20 73 00	jsr $0073	   jsr CHRGET
-.c04f	08		php		   php
-.c050	c9 40		cmp #$40	   cmp #"@"
-.c052	f0 04		beq $c058	   beq newdispatch
-.c054	28		plp		   plp
-.c055	4c e7 a7	jmp $a7e7	   jmp GONE+3
-=$c058					newdispatch = *
-.c058	28		plp		   plp
-.c059	20 5f c0	jsr $c05f	   jsr dispatch
-.c05c	4c ae a7	jmp $a7ae	   jmp NEWSTT
-=$c05f					dispatch = *
-.c05f	20 73 00	jsr $0073	   jsr CHRGET
-.c062	c9 41		cmp #$41	   cmp #'a'
-.c064	b0 03		bcs $c069	   bcs contin1
-.c066	4c 08 af	jmp $af08	   jmp SNERR
-=$c069					contin1 = *
-.c069	c9 5a		cmp #$5a	   cmp #'z'
-.c06b	90 03		bcc $c070	   bcc contin2
-.c06d	4c 08 af	jmp $af08	   jmp SNERR
-=$c070					contin2 =  *
-.c070	38		sec		   sec
-.c071	e9 41		sbc #$41	   sbc #'a'
-.c073	c9 5a		cmp #$5a	   cmp #'z'
-.c075	0a		asl a		   asl
-.c076	aa		tax		   tax
-.c077	bd 19 c0	lda $c019,x	   lda table+1,x
-.c07a	48		pha		   pha
-.c07b	bd 18 c0	lda $c018,x	   lda table,x
-.c07e	48		pha		   pha
-.c07f	4c 73 00	jmp $0073	   jmp CHRGET
->c082	3f 4e 4f 54 20 49 4d 50		msg .text "?not implemented  error"
->c08a	4c 45 4d 45 4e 54 45 44 20 20 45 52 52 4f 52
->c099	00				    .byte 0
-=$c09a					notimp = *
-.c09a	a0 c0		ldy #$c0	   ldy #>msg
-.c09c	a9 82		lda #$82	   lda #<msg
-.c09e	4c 1e ab	jmp $ab1e	   jmp STROUT
-=$c0a1					intromsg = *
-.c0a1	a0 c0		ldy #$c0	    ldy #>imsg
-.c0a3	a9 a8		lda #$a8	    lda #<imsg
-.c0a5	4c 1e ab	jmp $ab1e	    jmp STROUT
-.c0a8					imsg
->c0a8	53 55 50 45 52 43 50 55		    .text "supercpu ram wedge", $0d
->c0b0	20 52 41 4d 20 57 45 44 47 45 0d
->c0bb	42 59 20 4a 49 4d 20 4c		    .text "by jim lawless", $0d
->c0c3	41 57 4c 45 53 53 0d
->c0ca	4d 4f 44 49 46 49 45 44		    .text "modified by scott hutter",$0d
->c0d2	20 42 59 20 53 43 4f 54 54 20 48 55 54 54 45 52
->c0e2	0d
->c0e3	00				   .byte 0
-=$c0e4					do_bank = *
-.c0e4	20 9e b7	jsr $b79e	    jsr $b79e ; get byte into .x
-.c0e7	8a		txa		    txa
-.c0e8	8d fe c0	sta $c0fe	    sta bank_stor
-.c0eb	60		rts		    rts
-=$c0ec					do_cpoke = *
-.c0ec	18		clc		                clc
-.c0ed	fb		xce		                xce
-.c0ee	e2 30		sep #$30	                SEP #$30
-.c0f0	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $16
-.c0f3	85 16		sta $16		    sta $16
-.c0f5	20 eb b7	jsr $b7eb	    jsr $b7eb       ; handle values (puts lo and hi byte of addresses at $14/$15) and value in X
-.c0f8	8a		txa		    txa
-.c0f9	87 14		sta [$14]	    sta [$14]       ; requires lo byte, hi byte, bank
-.c0fb	38		sec		                sec
-.c0fc	fb		xce		                xce
-.c0fd	60		rts		    rts
-.c0fe					bank_stor:
->c0fe	06				    .byte $06
-=$c0ff					do_load = *
-.c0ff	18		clc		                clc
-.c100	fb		xce		                xce
-.c101	e2 20		sep #$20	                SEP #$20
-.c103	e2 30		sep #$30	                SEP #$30
-.c105	c9 22		cmp #$22	      cmp #$22       ; quote char?
-.c107	d0 19		bne $c122	      bne _errorjmp  ; no - error
-.c109	a9 00		lda #$00	      lda #$00
-.c10b	8d bf c1	sta $c1bf	      sta fnamelen
-.c10e					_fnameloop
-.c10e	20 73 00	jsr $0073	      jsr $0073      ; start getting filename
-.c111	c9 22		cmp #$22	      cmp #$22       ; end quote?
-.c113	f0 10		beq $c125	      beq +          ; yes, skip ahead
-.c115	ac bf c1	ldy $c1bf	      ldy fnamelen   ; get filename length count
-.c118	99 ae c1	sta $c1ae,y	      sta fname,y    ; grab next filename char
-.c11b	c8		iny		      iny            ; increase count
-.c11c	8c bf c1	sty $c1bf	      sty fnamelen   ; save new filename length
-.c11f	4c 0e c1	jmp $c10e	      jmp _fnameloop
-.c122					_errorjmp
-.c122	4c a4 c1	jmp $c1a4	      jmp _error
-.c125	20 73 00	jsr $0073	+     jsr $0073      ; get char
-.c128	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
-.c12a	d0 78		bne $c1a4	      bne _error
-.c12c	20 73 00	jsr $0073	      jsr $0073      ; get char
-.c12f	f0 73		beq $c1a4	      beq _error     ; zero flag is set if end of line or :
-.c131	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate the memory address
-.c134	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
-.c137	a5 14		lda $14		      lda $14        ; move values to ae-b0
-.c139	85 ae		sta $ae		      sta $ae
-.c13b	a5 15		lda $15		      lda $15
-.c13d	85 af		sta $af		      sta $af
-.c13f	ad fe c0	lda $c0fe	      lda bank_stor
-.c142	85 b0		sta $b0		      sta $b0
-.c144	a0 00		ldy #$00	      ldy #$00       ; get current char of line
-.c146	b1 7a		lda ($7a),y	      lda ($007a),y
-.c148	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
-.c14a	d0 58		bne $c1a4	      bne _error
-.c14c	20 73 00	jsr $0073	      jsr $0073      ; get char
-.c14f	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate
-.c152	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
-.c155	a5 15		lda $15		      lda $15        ; if > 255, error
-.c157	d0 4b		bne $c1a4	      bne _error
-.c159	a5 14		lda $14		      lda $14        ; if > 30, error
-.c15b	c9 1e		cmp #$1e	      cmp #$1e
-.c15d	b0 45		bcs $c1a4	      bcs _error
-.c15f	ad bf c1	lda $c1bf	      lda fnamelen
-.c162	a2 ae		ldx #$ae	      ldx #<fname
-.c164	a0 c1		ldy #$c1	      ldy #>fname
-.c166	20 bd ff	jsr $ffbd	      jsr $ffbd     ; call setnam
-.c169	a9 02		lda #$02	      lda #$02      ; file number 2
-.c16b	a6 14		ldx $14		      ldx $14       ; device number
-.c16d	d0 02		bne $c171	      bne _skip
-.c16f	a2 08		ldx #$08	      ldx #$08      ; default to device 8
-.c171					_skip
-.c171	a0 02		ldy #$02	      ldy #$02      ; secondary address 2
-.c173	20 ba ff	jsr $ffba	      jsr $ffba     ; call setlfs
-.c176	20 c0 ff	jsr $ffc0	      jsr $ffc0     ; call open
-.c179	b0 29		bcs $c1a4	      bcs _error    ; if carry set, the file could not be opened
-.c17b	a2 02		ldx #$02	      ldx #$02      ; filenumber 2
-.c17d	20 c6 ff	jsr $ffc6	      jsr $ffc6     ; call chkin (file 2 now used as input)
-.c180	a0 00		ldy #$00	        ldy #$00
-.c182	20 b7 ff	jsr $ffb7	_loop   jsr $ffb7     ; call readst (read status byte)
-.c185	d0 0e		bne $c195	        bne _eof      ; either eof or read error
-.c187	20 cf ff	jsr $ffcf	        jsr $ffcf     ; call chrin (get a byte from file)
-.c18a	97 ae		sta [$ae],y	         sta [$ae],y   ; write byte to memory
-.c18c	e6 ae		inc $ae		         inc $0000ae
-.c18e	d0 02		bne $c192	         bne _skip2
-.c190	e6 af		inc $af		         inc $0000af
-.c192	4c 82 c1	jmp $c182	_skip2   jmp _loop     ; next byte
-.c195					_eof
-.c195	29 40		and #$40	        and #$40      ; end of file?
-.c197	f0 10		beq $c1a9	        beq _readerror
-.c199					_close
-.c199	a9 02		lda #$02	        lda #$02      ; filenumber 2
-.c19b	20 c3 ff	jsr $ffc3	        jsr $ffc3     ; call close
-.c19e	20 cc ff	jsr $ffcc	        jsr $ffcc     ; call clrchn
+.c000	a9 49		lda #$49	   lda #<newgone
+.c002	8d 08 03	sta $0308	   sta $0308
+.c005	a9 c0		lda #$c0	   lda #>newgone
+.c007	8d 09 03	sta $0309	   sta $0309
+.c00a	a9 bd		lda #$bd	    lda #<cpeek
+.c00c	8d 11 03	sta $0311	    sta $311
+.c00f	a9 c1		lda #$c1	    lda #>cpeek
+.c011	8d 12 03	sta $0312	    sta $312
+.c014	60		rts		   rts
+=$c015					table=*
+>c015	96 c0				   .word notimp-1 ; @a
+>c017	e0 c0				   .word do_bank-1 ; @b
+>c019	96 c0				   .word notimp-1  ; @c
+>c01b	96 c0				   .word notimp-1 ; @d
+>c01d	96 c0				   .word notimp-1 ; @e
+>c01f	96 c0				   .word notimp-1 ; @f
+>c021	96 c0				   .word notimp-1 ; @g
+>c023	96 c0				   .word notimp-1 ; @h
+>c025	96 c0				   .word notimp-1 ; @i
+>c027	96 c0				   .word notimp-1 ; @j
+>c029	96 c0				   .word notimp-1 ; @k
+>c02b	fb c0				   .word do_load-1 ; @l
+>c02d	96 c0				   .word notimp-1 ; @m
+>c02f	96 c0				   .word notimp-1 ; @n
+>c031	96 c0				   .word notimp-1 ; @o
+>c033	e8 c0				   .word do_cpoke-1 ; @p
+>c035	96 c0				   .word notimp-1 ; @q
+>c037	96 c0				   .word notimp-1 ; @r
+>c039	96 c0				   .word notimp-1 ; @s
+>c03b	96 c0				   .word notimp-1 ; @t
+>c03d	96 c0				   .word notimp-1 ; @u
+>c03f	96 c0				   .word notimp-1 ; @v
+>c041	96 c0				   .word notimp-1 ; @w
+>c043	96 c0				   .word notimp-1 ; @x
+>c045	96 c0				   .word notimp-1 ; @y
+>c047	96 c0				   .word notimp-1 ; @z
+=$c049					newgone = *
+.c049	20 73 00	jsr $0073	   jsr CHRGET
+.c04c	08		php		   php
+.c04d	c9 40		cmp #$40	   cmp #"@"
+.c04f	f0 04		beq $c055	   beq newdispatch
+.c051	28		plp		   plp
+.c052	4c e7 a7	jmp $a7e7	   jmp GONE+3
+=$c055					newdispatch = *
+.c055	28		plp		   plp
+.c056	20 5c c0	jsr $c05c	   jsr dispatch
+.c059	4c ae a7	jmp $a7ae	   jmp NEWSTT
+=$c05c					dispatch = *
+.c05c	20 73 00	jsr $0073	   jsr CHRGET
+.c05f	c9 41		cmp #$41	   cmp #'a'
+.c061	b0 03		bcs $c066	   bcs contin1
+.c063	4c 08 af	jmp $af08	   jmp SNERR
+=$c066					contin1 = *
+.c066	c9 5a		cmp #$5a	   cmp #'z'
+.c068	90 03		bcc $c06d	   bcc contin2
+.c06a	4c 08 af	jmp $af08	   jmp SNERR
+=$c06d					contin2 =  *
+.c06d	38		sec		   sec
+.c06e	e9 41		sbc #$41	   sbc #'a'
+.c070	c9 5a		cmp #$5a	   cmp #'z'
+.c072	0a		asl a		   asl
+.c073	aa		tax		   tax
+.c074	bd 16 c0	lda $c016,x	   lda table+1,x
+.c077	48		pha		   pha
+.c078	bd 15 c0	lda $c015,x	   lda table,x
+.c07b	48		pha		   pha
+.c07c	4c 73 00	jmp $0073	   jmp CHRGET
+>c07f	3f 4e 4f 54 20 49 4d 50		msg .text "?not implemented  error"
+>c087	4c 45 4d 45 4e 54 45 44 20 20 45 52 52 4f 52
+>c096	00				    .byte 0
+=$c097					notimp = *
+.c097	a0 c0		ldy #$c0	   ldy #>msg
+.c099	a9 7f		lda #$7f	   lda #<msg
+.c09b	4c 1e ab	jmp $ab1e	   jmp STROUT
+=$c09e					intromsg = *
+.c09e	a0 c0		ldy #$c0	    ldy #>imsg
+.c0a0	a9 a5		lda #$a5	    lda #<imsg
+.c0a2	4c 1e ab	jmp $ab1e	    jmp STROUT
+.c0a5					imsg
+>c0a5	53 55 50 45 52 43 50 55		    .text "supercpu ram wedge", $0d
+>c0ad	20 52 41 4d 20 57 45 44 47 45 0d
+>c0b8	42 59 20 4a 49 4d 20 4c		    .text "by jim lawless", $0d
+>c0c0	41 57 4c 45 53 53 0d
+>c0c7	4d 4f 44 49 46 49 45 44		    .text "modified by scott hutter",$0d
+>c0cf	20 42 59 20 53 43 4f 54 54 20 48 55 54 54 45 52
+>c0df	0d
+>c0e0	00				   .byte 0
+=$c0e1					do_bank = *
+.c0e1	20 9e b7	jsr $b79e	    jsr $b79e ; get byte into .x
+.c0e4	8a		txa		    txa
+.c0e5	8d fb c0	sta $c0fb	    sta bank_stor
+.c0e8	60		rts		    rts
+=$c0e9					do_cpoke = *
+.c0e9	18		clc		                clc
+.c0ea	fb		xce		                xce
+.c0eb	e2 30		sep #$30	                SEP #$30
+.c0ed	ad fb c0	lda $c0fb	    lda bank_stor   ; store bank at $16
+.c0f0	85 16		sta $16		    sta $16
+.c0f2	20 eb b7	jsr $b7eb	    jsr $b7eb       ; handle values (puts lo and hi byte of addresses at $14/$15) and value in X
+.c0f5	8a		txa		    txa
+.c0f6	87 14		sta [$14]	    sta [$14]       ; requires lo byte, hi byte, bank
+.c0f8	38		sec		                sec
+.c0f9	fb		xce		                xce
+.c0fa	60		rts		    rts
+.c0fb					bank_stor:
+>c0fb	06				    .byte $06
+=$c0fc					do_load = *
+.c0fc	18		clc		                clc
+.c0fd	fb		xce		                xce
+.c0fe	e2 20		sep #$20	                SEP #$20
+.c100	e2 30		sep #$30	                SEP #$30
+.c102	c9 22		cmp #$22	      cmp #$22       ; quote char?
+.c104	d0 19		bne $c11f	      bne _errorjmp  ; no - error
+.c106	a9 00		lda #$00	      lda #$00
+.c108	8d bc c1	sta $c1bc	      sta fnamelen
+.c10b					_fnameloop
+.c10b	20 73 00	jsr $0073	      jsr $0073      ; start getting filename
+.c10e	c9 22		cmp #$22	      cmp #$22       ; end quote?
+.c110	f0 10		beq $c122	      beq +          ; yes, skip ahead
+.c112	ac bc c1	ldy $c1bc	      ldy fnamelen   ; get filename length count
+.c115	99 ab c1	sta $c1ab,y	      sta fname,y    ; grab next filename char
+.c118	c8		iny		      iny            ; increase count
+.c119	8c bc c1	sty $c1bc	      sty fnamelen   ; save new filename length
+.c11c	4c 0b c1	jmp $c10b	      jmp _fnameloop
+.c11f					_errorjmp
+.c11f	4c a1 c1	jmp $c1a1	      jmp _error
+.c122	20 73 00	jsr $0073	+     jsr $0073      ; get char
+.c125	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
+.c127	d0 78		bne $c1a1	      bne _error
+.c129	20 73 00	jsr $0073	      jsr $0073      ; get char
+.c12c	f0 73		beq $c1a1	      beq _error     ; zero flag is set if end of line or :
+.c12e	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate the memory address
+.c131	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
+.c134	a5 14		lda $14		      lda $14        ; move values to ae-b0
+.c136	85 ae		sta $ae		      sta $ae
+.c138	a5 15		lda $15		      lda $15
+.c13a	85 af		sta $af		      sta $af
+.c13c	ad fb c0	lda $c0fb	      lda bank_stor
+.c13f	85 b0		sta $b0		      sta $b0
+.c141	a0 00		ldy #$00	      ldy #$00       ; get current char of line
+.c143	b1 7a		lda ($7a),y	      lda ($007a),y
+.c145	c9 2c		cmp #$2c	      cmp #$2c       ; if not comma, error
+.c147	d0 58		bne $c1a1	      bne _error
+.c149	20 73 00	jsr $0073	      jsr $0073      ; get char
+.c14c	20 8a ad	jsr $ad8a	      jsr $ad8a      ; evaluate
+.c14f	20 f7 b7	jsr $b7f7	      jsr $b7f7      ; put value at $14/$15
+.c152	a5 15		lda $15		      lda $15        ; if > 255, error
+.c154	d0 4b		bne $c1a1	      bne _error
+.c156	a5 14		lda $14		      lda $14        ; if > 30, error
+.c158	c9 1e		cmp #$1e	      cmp #$1e
+.c15a	b0 45		bcs $c1a1	      bcs _error
+.c15c	ad bc c1	lda $c1bc	      lda fnamelen
+.c15f	a2 ab		ldx #$ab	      ldx #<fname
+.c161	a0 c1		ldy #$c1	      ldy #>fname
+.c163	20 bd ff	jsr $ffbd	      jsr $ffbd     ; call setnam
+.c166	a9 02		lda #$02	      lda #$02      ; file number 2
+.c168	a6 14		ldx $14		      ldx $14       ; device number
+.c16a	d0 02		bne $c16e	      bne _skip
+.c16c	a2 08		ldx #$08	      ldx #$08      ; default to device 8
+.c16e					_skip
+.c16e	a0 02		ldy #$02	      ldy #$02      ; secondary address 2
+.c170	20 ba ff	jsr $ffba	      jsr $ffba     ; call setlfs
+.c173	20 c0 ff	jsr $ffc0	      jsr $ffc0     ; call open
+.c176	b0 29		bcs $c1a1	      bcs _error    ; if carry set, the file could not be opened
+.c178	a2 02		ldx #$02	      ldx #$02      ; filenumber 2
+.c17a	20 c6 ff	jsr $ffc6	      jsr $ffc6     ; call chkin (file 2 now used as input)
+.c17d	a0 00		ldy #$00	        ldy #$00
+.c17f	20 b7 ff	jsr $ffb7	_loop   jsr $ffb7     ; call readst (read status byte)
+.c182	d0 0e		bne $c192	        bne _eof      ; either eof or read error
+.c184	20 cf ff	jsr $ffcf	        jsr $ffcf     ; call chrin (get a byte from file)
+.c187	97 ae		sta [$ae],y	         sta [$ae],y   ; write byte to memory
+.c189	e6 ae		inc $ae		         inc $0000ae
+.c18b	d0 02		bne $c18f	         bne _skip2
+.c18d	e6 af		inc $af		         inc $0000af
+.c18f	4c 7f c1	jmp $c17f	_skip2   jmp _loop     ; next byte
+.c192					_eof
+.c192	29 40		and #$40	        and #$40      ; end of file?
+.c194	f0 10		beq $c1a6	        beq _readerror
+.c196					_close
+.c196	a9 02		lda #$02	        lda #$02      ; filenumber 2
+.c198	20 c3 ff	jsr $ffc3	        jsr $ffc3     ; call close
+.c19b	20 cc ff	jsr $ffcc	        jsr $ffcc     ; call clrchn
+.c19e	38		sec		                sec
+.c19f	fb		xce		                xce
+.c1a0	60		rts		        rts
+.c1a1					_error
 .c1a1	38		sec		                sec
 .c1a2	fb		xce		                xce
-.c1a3	60		rts		        rts
-.c1a4					_error
-.c1a4	38		sec		                sec
-.c1a5	fb		xce		                xce
-.c1a6	4c 99 c1	jmp $c199	        jmp _close    ; even if open failed, the file has to be closed
-.c1a9					_readerror
-.c1a9	38		sec		                sec
-.c1aa	fb		xce		                xce
-.c1ab	4c 99 c1	jmp $c199	        jmp _close
-.c1ae					fname:
->c1ae	00 00 00 00 00 00 00 00		.byte $00, $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->c1b6	00 00 00 00 00 00 00 00 00
-.c1bf					fnamelen:
->c1bf	00				.byte $00
-.c1c0					cpeek:
-.c1c0	18		clc		                clc
-.c1c1	fb		xce		                xce
-.c1c2	e2 30		sep #$30	                SEP #$30
-.c1c4	20 9b bc	jsr $bc9b	    jsr $bc9b   ; convert value from float to int @ $64/$65
-.c1c7	a5 64		lda $64		    lda $64
-.c1c9	a6 65		ldx $65		    ldx $65
-.c1cb	86 fb		stx $fb		    stx $fb     ; store the lo and hi bytes temporarily
-.c1cd	85 fc		sta $fc		    sta $fc
-.c1cf	ad fe c0	lda $c0fe	    lda bank_stor   ; store bank at $fd
-.c1d2	85 fd		sta $fd		    sta $fd
-.c1d4	a7 fb		lda [$fb]	    lda [$fb]   ; get value at 24 bit address
-.c1d6	a8		tay		    tay         ; lsb of value in y
-.c1d7	a9 00		lda #$00	    lda #$00    ; msb of value in a
-.c1d9	20 91 b3	jsr $b391	    jsr $b391   ; convert int back to float
-.c1dc	38		sec		                sec
-.c1dd	fb		xce		                xce
-.c1de	60		rts		    rts
-.c1df					end
+.c1a3	4c 96 c1	jmp $c196	        jmp _close    ; even if open failed, the file has to be closed
+.c1a6					_readerror
+.c1a6	38		sec		                sec
+.c1a7	fb		xce		                xce
+.c1a8	4c 96 c1	jmp $c196	        jmp _close
+.c1ab					fname:
+>c1ab	00 00 00 00 00 00 00 00		.byte $00, $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>c1b3	00 00 00 00 00 00 00 00 00
+.c1bc					fnamelen:
+>c1bc	00				.byte $00
+.c1bd					cpeek:
+.c1bd	18		clc		                clc
+.c1be	fb		xce		                xce
+.c1bf	e2 30		sep #$30	                SEP #$30
+.c1c1	20 9b bc	jsr $bc9b	    jsr $bc9b   ; convert value from float to int @ $64/$65
+.c1c4	a5 64		lda $64		    lda $64
+.c1c6	a6 65		ldx $65		    ldx $65
+.c1c8	86 fb		stx $fb		    stx $fb     ; store the lo and hi bytes temporarily
+.c1ca	85 fc		sta $fc		    sta $fc
+.c1cc	ad fb c0	lda $c0fb	    lda bank_stor   ; store bank at $fd
+.c1cf	85 fd		sta $fd		    sta $fd
+.c1d1	a7 fb		lda [$fb]	    lda [$fb]   ; get value at 24 bit address
+.c1d3	a8		tay		    tay         ; lsb of value in y
+.c1d4	a9 00		lda #$00	    lda #$00    ; msb of value in a
+.c1d6	20 91 b3	jsr $b391	    jsr $b391   ; convert int back to float
+.c1d9	38		sec		                sec
+.c1da	fb		xce		                xce
+.c1db	60		rts		    rts
+.c1dc					end
 
 ;******  End of listing
